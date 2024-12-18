@@ -34,17 +34,26 @@ public class Main {
                 header = in.readLine();
                 System.out.println(header);
             } while (!header.isEmpty());
-            //quando entra nella pagina gli compare subito l'index
-            if(resource.equals("/")){
-                resource = "/index.html";
+            // quando entra nella pagina gli compare subito l'index
+
+            if (resource.endsWith("/")) {
+                resource = resource + "index.html";
             }
-            //creo il percorso del file 
-            File file = new File("htdocs/" + resource);
-            //controllo se esiste q uel file o no e poi lo mando
+
+            File file = new File("htdocs" + resource);
+
+            if (file.isDirectory()) {
+                out.writeBytes("HTTP/1.1 301 Moved Permanently\n");
+                out.writeBytes("Content-Length: 0\n");
+                out.writeBytes("Location: " + resource + "/\n");
+                out.writeBytes("\n");
+            }
+            // creo il percorso del file
+            // controllo se esiste quel file o no e poi lo mando
             if (file.exists()) {
                 out.writeBytes("http/1.1 200 Ok" + "\n");
                 out.writeBytes("Content-Lenght " + file.length() + "\n");
-                out.writeBytes("Content-Type:" + getContentType(file)  + "\n");
+                out.writeBytes("Content-Type:" + getContentType(file) + "\n");
                 out.writeBytes("\n");
 
                 InputStream input = new FileInputStream(file);
@@ -80,7 +89,7 @@ public class Main {
             case "html":
                 return "text/html";
         }
-                return exit;
+        return exit;
 
     }
 }
